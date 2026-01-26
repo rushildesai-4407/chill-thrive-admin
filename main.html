@@ -1,0 +1,654 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chill Thrive | Master Admin 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="cdnjs.cloudflare.com" rel="stylesheet">
+    <style>
+        :root { --brand-blue: #0077b6; }
+        body { background-color: #f8fafc; font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
+
+
+.navbar{
+  background:#003366;
+  color:#fff;
+  padding:14px 16px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  position:fixed;
+  width:100%;
+  z-index:50;
+  flex-wrap:wrap;
+}
+
+
+.nav-left{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.logo{
+  height:40px;
+  width:auto;
+  cursor: pointer;
+}
+
+.nav-title{
+ font-size:22px;
+ font-weight:bold;
+ color:white;
+ letter-spacing:1px;
+}
+
+.tagline{
+  display:block;
+  font-size:12px;
+  opacity:0.8;
+}
+
+.logout-btn{
+  background: transparent;
+  border: 2px solid #ffffff;
+  color: #ffffff;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.logout-btn:hover{
+  background: #ffffff;
+  color: #003366;
+}
+
+
+        .sidebar-link:hover { background-color: rgba(0, 119, 182, 0.1); border-right: 4px solid var(--brand-blue); }
+        .card { background: white; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: transform 0.2s; }
+        .card:hover { transform: translateY(-2px); }
+        .btn-primary { background-color: var(--brand-blue); transition: all 0.3s; }
+        .btn-primary:hover { background-color: #005f92; }
+    </style>
+</head>
+<body class="relative">
+
+    <!-- change start-->
+    <header class="navbar">
+       <button
+onclick="toggleSidebar()"
+class="md:hidden text-white text-2xl"
+>
+☰
+</button>
+  <div class="nav-left">
+    <a href="index.html">
+    <img src="Chillthrivelogo.jpeg" alt="Chill Thrive Logo" class="logo">
+    </a>  
+  </div>
+ 
+
+  <div class="nav-title">
+    Chill Thrive
+    <span class="tagline"> Ice Bath Center</span>
+  </div>
+  <button class="logout-btn" onclick="logout()">
+  Log Out
+</button>
+
+    </header>
+<!-- change end-->
+
+<div
+onclick="toggleSidebar()"
+class="fixed inset-0 bg-black/40 z-30 hidden"
+id="sidebarOverlay">
+</div>
+
+    <!-- MODAL FOR ADDING SERVICE (Remains the same as previous code) -->
+    <div id="serviceModal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden animate-in zoom-in duration-200">
+            <div class="p-6 border-b flex justify-between items-center bg-blue-50">
+                <h3 class="text-xl font-bold text-blue-800">New Service Entry</h3>
+                <button onclick="toggleModal()" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+            </div>
+            <form id="addServiceForm" class="p-6 space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700">Service Name</label>
+                    <input type="text" id="sName" required placeholder="e.g., Luxury Steam Bath" class="w-full mt-1 p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700">Description</label>
+                    <textarea id="sDesc" required placeholder="Service benefits..." class="w-full mt-1 p-2 border rounded-lg h-20 focus:ring-2 focus:ring-blue-500 outline-none"></textarea>
+                </div>
+                <div>
+  <label class="block text-sm font-semibold text-gray-700">
+    Service Image
+  </label>
+  <input 
+    type="file" 
+    id="sImage" 
+    accept="image/*"
+    required
+    class="w-full mt-1 p-2 border rounded-lg bg-white"
+  >
+</div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700">Price ($)</label>
+                        <input type="number" id="sPrice" required class="w-full mt-1 p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700">Duration (min)</label>
+                        <input type="number" id="sDuration" required class="w-full mt-1 p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+                </div>
+                <div class="pt-4 flex space-x-3">
+                    <button type="button" onclick="toggleModal()" class="flex-1 px-4 py-2 border rounded-lg hover:bg-gray-50 text-gray-600">Cancel</button>
+                    <button type="submit" class="flex-1 btn-primary text-white px-4 py-2 rounded-lg font-medium">Create Service</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+
+     <!--change start-->
+<aside id="sidebar"
+class="
+fixed left-0 top-[80px]
+h-[calc(100vh-80px)]
+w-64
+bg-white
+border-r
+border-gray-200
+z-40
+overflow-y-auto
+transform -translate-x-full
+md:translate-x-0
+transition-transform duration-300
+">
+
+     <!--change end-->
+
+        <div class="p-6">
+            <!-- Logo and Brand Name -->
+           <!--  <div class="flex items-center mb-3">
+                <img src="Chillthrivelogo.jpeg" alt="Chill Thrive Logo Placeholder" class="w-10 h-10 mr-3">
+                <h1 class="text-xl font-bold text-blue-600">CHILL <span class="text-gray-800">THRIVE</span></h1>
+            </div> -->
+            <!-- Current Date Display -->
+            <p id="currentDate" class="text-xs text-gray-500 uppercase tracking-widest mt-1"></p>
+        </div>
+        
+        <nav class="mt-4">
+            <!-- edited-->
+            <a href="#services" class="sidebar-link flex items-center px-6 py-3 text-gray-700"><i class="fas fa-swimmer w-6"></i> <span>Services</span></a>
+            <a href="#combos" class="sidebar-link flex items-center px-6 py-3 text-gray-700"><i class="fas fa-layer-group w-6"></i> <span>Combo Offers</span></a>
+            <a href="#discounts" class="sidebar-link flex items-center px-6 py-3 text-gray-700"><i class="fas fa-tags w-6"></i> <span>Discount System</span></a>
+            <a href="http://127.0.0.1:5500/Admin%20page/activebookings.html" class="sidebar-link flex items-center px-6 py-3 text-gray-700"><i class="fas fa-calendar-alt w-6"></i> <span>Bookings</span></a>
+            <a href="#content" class="sidebar-link flex items-center px-6 py-3 text-gray-700"><i class="fas fa-file-alt w-6"></i> <span>CMS</span></a>
+            <a href="http://127.0.0.1:5500/Admin%20page/event.html" class="sidebar-link flex items-center px-6 py-3 text-gray-700"><i class="fas fa-file-alt w-6"></i> <span>Event Management</span></a>
+            <a href="http://127.0.0.1:5500/Admin%20page/gallerymanagement.html" class="sidebar-link flex items-center px-6 py-3 text-gray-700"><i class="fas fa-file-alt w-6"></i> <span>Gallery managment</span></a>
+            <a href="http://127.0.0.1:5500/Admin%20page/reviews.html" class="sidebar-link flex items-center px-6 py-3 text-gray-700"><i class="fas fa-file-alt w-6"></i> <span>Reviews</span></a>
+
+        </nav>
+    </aside>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyD8_xuBzMXPrhqoIyG8jLRZtWd2q0Lcsrs",
+    authDomain: "chill-thrive-8ec9c.firebaseapp.com",
+    projectId: "chill-thrive-8ec9c",
+    storageBucket: "chill-thrive-8ec9c.firebasestorage.app",
+    messagingSenderId: "620526540978",
+    appId: "1:620526540978:web:803517f456f8c2a15891ab"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+</script>
+
+    <!-- Main Content (All sections as requested previously) -->
+
+     <!-- chage start-->
+<main class="p-4 md:p-8 pt-[140px] md:ml-64">
+
+    <!--change ended-->
+
+        
+        <!-- SERVICES MANAGEMENT SECTION -->
+        <section id="services" class="mb-12">
+             <!-- ... content same as previous code ... -->
+             <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
+<br><br><br><br><br><br>
+                <h3 class="text-2xl font-bold text-gray-800">Services Management</h3>
+                <button onclick="toggleModal()" class="btn-primary text-white px-5 py-2.5 rounded-lg text-sm font-semibold shadow-lg">
+                    <i class="fas fa-plus mr-2"></i> Add New Service
+                </button>
+            </div>
+            
+            
+
+            
+               
+            
+
+           
+<div id="servicesContainer"
+class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <!-- Services will be rendered dynamically here -->
+</div>
+
+            
+        </section>
+
+        <!-- COMBO & DISCOUNT SECTION -->
+        <!-- edited -->
+            <section id="combos" class="card p-6 mb-6">
+                 <!-- ... content same as previous code ... -->
+                 <h3 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2">Combo Management</h3>
+                <div class="space-y-3">
+                    <input type="text" placeholder="Combo Name (e.g. Total Refresh)" class="w-full p-2 border rounded text-sm">
+                    <select class="w-full p-2 border rounded text-sm"><option>Select Included Services...</option></select>
+                    <div class="flex space-x-2">
+                        <input type="number" placeholder="Discount %" class="w-1/2 p-2 border rounded text-sm">
+                        <button class="w-1/2 btn-primary text-white rounded text-sm font-bold">Create Combo</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- new change start-->
+            <section class="mb-12">
+  <h3 class="text-xl font-bold text-gray-800 mb-4">
+    Active Combos
+  </h3>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+    <!-- Combo Card -->
+    <div class="card p-5 border-t-4 border-blue-500">
+      <div class="flex justify-between items-start mb-3">
+        <h4 class="font-bold text-lg text-blue-900">
+          Total Refresh
+        </h4>
+        <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
+          Active
+        </span>
+      </div>
+
+      <p class="text-sm text-gray-600 mb-3">
+        Ice Bath + Steam Bath
+      </p>
+
+      <div class="text-sm mb-4 bg-blue-50 p-2 rounded">
+        Discount: <b class="text-blue-700">20%</b>
+      </div>
+
+      <div class="flex space-x-2">
+        <button class="flex-1 bg-gray-100 hover:bg-gray-200 py-2 rounded text-sm font-medium">
+          Edit
+        </button>
+        <button class="flex-1 bg-red-50 hover:bg-red-100 text-red-600 py-2 rounded text-sm font-medium">
+          Disable
+        </button>
+      </div>
+    </div>
+
+     <div class="card p-5 border-t-4 border-blue-500">
+      <div class="flex justify-between items-start mb-3">
+        <h4 class="font-bold text-lg text-blue-900">
+          Relaxing Therapy
+        </h4>
+        <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
+          Active
+        </span>
+      </div>
+
+      <p class="text-sm text-gray-600 mb-3">
+        Ice Bath + Jacuzzi
+      </p>
+
+      <div class="text-sm mb-4 bg-blue-50 p-2 rounded">
+        Discount: <b class="text-blue-700">25%</b>
+      </div>
+
+      <div class="flex space-x-2">
+        <button class="flex-1 bg-gray-100 hover:bg-gray-200 py-2 rounded text-sm font-medium">
+          Edit
+        </button>
+        <button class="flex-1 bg-red-50 hover:bg-red-100 text-red-600 py-2 rounded text-sm font-medium">
+          Disable
+        </button>
+      </div>
+    </div>
+
+     <div class="card p-5 border-t-4 border-blue-500">
+      <div class="flex justify-between items-start mb-3">
+        <h4 class="font-bold text-lg text-blue-900">
+          Full Recovery Combo
+        </h4>
+        <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
+          Active
+        </span>
+      </div>
+
+      <p class="text-sm text-gray-600 mb-3">
+        Ice Bath + Steam Bath + Jacuzzi
+      </p>
+
+      <div class="text-sm mb-4 bg-blue-50 p-2 rounded">
+        Discount: <b class="text-blue-700">30%</b>
+      </div>
+
+      <div class="flex space-x-2">
+        <button class="flex-1 bg-gray-100 hover:bg-gray-200 py-2 rounded text-sm font-medium">
+          Edit
+        </button>
+        <button class="flex-1 bg-red-50 hover:bg-red-100 text-red-600 py-2 rounded text-sm font-medium">
+          Disable
+        </button>
+      </div>
+    </div>
+
+  </div>
+</section>
+<!-- new change end -->
+<!--edited-->
+            <section id="discounts" class="card p-6 mb-12">
+                 <!-- ... content same as previous code ... -->
+                 <h3 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2">Discount System</h3>
+                <div class="space-y-3">
+                    <div class="flex space-x-2">
+                        <input id="promoCodeInput" type="text" placeholder="Promo Code" class="w-full p-2 border rounded text-sm">
+                        <input id="discountValueInput" type="number" placeholder="Value" class="w-24 p-2 border rounded text-sm">
+                    </div>
+                    <div class="flex items-center space-x-2 text-sm text-gray-600">
+                        <input type="checkbox" id="autoApplyCheckbox"> <label for="autoApplyCheckbox">Auto-apply time-based offer (Night Owl)</label>
+                    </div>
+                    <button id="saveDiscountBtn" class="w-full bg-gray-800 text-white py-2 rounded text-sm">Launch Promo</button>
+                </div>
+            </section>
+        </div>
+
+        <!-- BOOKING MANAGEMENT -->
+         <!--
+        <section id="bookings" class="card mb-12 overflow-hidden">
+             
+             <div class="p-6 border-b flex justify-between items-center bg-gray-50">
+                <h3 class="text-xl font-bold text-gray-800">Active Bookings</h3>
+                <button class="text-blue-600 text-sm font-bold border border-blue-600 px-3 py-1 rounded hover:bg-blue-600 hover:text-white transition">Export CSV</button>
+            </div>
+            <table class="w-full text-left">
+                <thead class="bg-white text-gray-400 text-xs uppercase">
+                    <tr>
+                        <th class="px-6 py-4">Customer</th>
+                        <th class="px-6 py-4">Service</th>
+                        <th class="px-6 py-4">Time Slot</th>
+                        <th class="px-6 py-4">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y text-sm">
+                    <tr>
+                        <td class="px-6 py-4 font-bold">Jane Smith</td>
+                        <td class="px-6 py-4 italic">Steam Bath</td>
+                        <td class="px-6 py-4">Today, 18:30</td>
+                        <td class="px-6 py-4 text-blue-600 space-x-4">
+                            <button class="hover:underline">Reschedule</button>
+                            <button class="text-red-500 hover:underline">Cancel</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section> -->
+
+        <!-- CONTENT MANAGEMENT -->
+        <section id="content" class="card p-6 mb-12">
+             <!-- ... content same as previous code ... -->
+             <h3 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2">Content Management (Awareness & Quotes)</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-xs font-bold uppercase text-gray-400 mb-1">Daily Motivation Quote</label>
+                    <input
+                type="text"
+                id="title"
+                placeholder="Enter quote or awareness message..."
+                class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm"
+            >
+                  </div>
+               
+            </div>
+<button
+            onclick="saveEvent()"
+            class="btn-primary text-white px-5 py-2.5 rounded-lg text-sm font-semibold shadow"
+        >
+            Save Content
+        </button>        
+          </section>
+
+        <!-- EVENT & GALLERY -->
+       <!-- <section id="events" class="mb-12"> -->
+             <!-- ... content same as previous code ... -->
+             <!--<h3 class="text-xl font-bold text-gray-800 mb-4">Event Management & Gallery</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="card p-4 border-2 border-dashed flex flex-col items-center justify-center text-gray-400 h-48 cursor-pointer hover:bg-gray-50">
+                    <i class="fas fa-upload text-3xl mb-2"></i>
+                    <span class="text-xs font-bold">Upload Photos</span>
+                </div>
+                <div class="card h-48 bg-cover bg-center rounded-xl relative group overflow-hidden" style="background-image: url('images.unsplash.com')">
+                    <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center space-x-4 transition">
+                        <button class="text-white"><i class="fas fa-edit"></i></button>
+                        <button class="text-red-400"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+            </div>
+        </section>-->
+
+    </main>
+
+  <script>
+const modal = document.getElementById('serviceModal');
+const form = document.getElementById('addServiceForm');
+const container = document.getElementById('servicesContainer');
+
+function toggleModal() {
+  modal.classList.toggle('hidden');
+  if (modal.classList.contains('hidden')) form.reset();
+}
+
+
+
+function renderServices() {
+  db.collection("services")
+    .orderBy("createdAt", "desc")
+    .onSnapshot(snapshot => {
+      container.innerHTML = "";
+
+      snapshot.forEach(doc => {
+        const service = doc.data();
+
+        container.insertAdjacentHTML("beforeend", `
+          <div class="card p-5 border-t-4 border-blue-500">
+
+            <img src="${service.image}" class="w-full h-40 object-cover rounded mb-3">
+
+            <div class="flex justify-between items-start mb-3">
+              <h4 class="font-bold text-lg text-blue-900">${service.name}</h4>
+              <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
+                ${service.status}
+              </span>
+            </div>
+
+            <p class="text-sm text-gray-600 mb-4 h-12 overflow-hidden">
+              ${service.description}
+            </p>
+
+            <div class="flex justify-between text-sm mb-4 bg-blue-50 p-2 rounded">
+              <span>₹${service.price}</span>
+              <span>${service.duration} min</span>
+            </div>
+<div class="flex gap-2">
+  <button
+    onclick="goToSlots('${service.name}')"
+    class="set-slots-btn flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded text-sm font-semibold">
+    Set Time Slots
+  </button>
+
+  <button
+    onclick="deleteService('${doc.id}')"
+    class="flex-1 bg-red-100 hover:bg-red-200 text-red-600 py-2 rounded text-sm font-semibold">
+    Remove
+  </button>
+</div>
+
+        `);
+      });
+    });
+}
+
+renderServices();
+
+
+function deleteService(id) {
+  if (!confirm("Delete this service?")) return;
+  db.collection("services").doc(id).delete();
+}
+
+form.addEventListener("submit", function (e) {
+  e.preventDefault();
+
+  const name = sName.value.trim();
+  const description = sDesc.value.trim();
+  const price = Number(sPrice.value);
+  const duration = Number(sDuration.value);
+  const imageFile = sImage.files[0];
+
+  if (!imageFile) {
+    alert("Upload image");
+    return;
+  }
+
+  const reader = new FileReader();
+
+  reader.onload = async function () {
+    await db.collection("services").add({
+      name,
+      description,
+      price,
+      duration,
+      image: reader.result,
+      status: "active",
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    toggleModal();
+  };
+
+  reader.readAsDataURL(imageFile);
+});
+
+
+renderServices();
+
+</script>
+<script>
+function goToSlots(serviceName) {
+  // store selected service
+  localStorage.setItem("selectedService", serviceName);
+
+  // redirect
+  window.location.href = "http://127.0.0.1:5500/Admin%20page/addslots.html";
+}
+</script>
+<script>
+document.getElementById("saveDiscountBtn").addEventListener("click", async () => {
+
+  const promoCode = document
+    .getElementById("promoCodeInput")
+    .value
+    .trim()
+    .toUpperCase();
+
+  if (!promoCode) {
+    alert("Enter a promo code");
+    return;
+  }
+
+  try {
+    await db.collection("promo_codes").doc(promoCode).set({
+      discount: 500,
+      active: true,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    alert("Promo code launched successfully!");
+    document.getElementById("promoCodeInput").value = "";
+    document.getElementById("discountValueInput").value = "";
+
+  } catch (err) {
+    console.error(err);
+    alert("Failed to save promo code");
+  }
+});
+</script>
+<script>
+  
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
+  
+  
+  function saveEvent() {
+    const title = document.getElementById("title").value.trim();
+
+    if (!title) {
+      alert("Please enter a quote or message");
+      return;
+    }
+
+    db.collection("events").add({
+      title: title,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    })
+    .then(() => {
+      alert("Content saved successfully!");
+      document.getElementById("title").value = "";
+    })
+    .catch(error => {
+      console.error(error);
+      alert("Error saving content");
+    });
+  }
+</script>
+<script>
+function toggleSidebar() {
+  const sidebar = document.getElementById("sidebar");
+  const overlay = document.getElementById("sidebarOverlay");
+
+  sidebar.classList.toggle("-translate-x-full");
+  overlay.classList.toggle("hidden");
+}
+</script>
+<script>
+function logout() {
+  // OPTIONAL: clear stored data
+  localStorage.clear();
+  sessionStorage.clear();
+
+  // Redirect to index page
+  window.location.href = "http://127.0.0.1:5500/Admin%20page/index.html";
+}
+</script>
+
+
+
+</body>
+</html>

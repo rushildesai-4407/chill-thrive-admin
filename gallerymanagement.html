@@ -1,0 +1,99 @@
+gallery admin:
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Admin Gallery | Chill Thrive</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script>
+/* 🔹 FIREBASE CONFIG — USE SAME AS YOUR OTHER PAGES */
+const firebaseConfig = {
+      apiKey: "AIzaSyD8_xuBzMXPrhqoIyG8jLRZtWd2q0Lcsrs",
+    authDomain: "chill-thrive-8ec9c.firebaseapp.com",
+    projectId: "chill-thrive-8ec9c",
+    storageBucket: "chill-thrive-8ec9c.firebasestorage.app",
+    messagingSenderId: "620526540978",
+    appId: "1:620526540978:web:803517f456f8c2a15891ab",
+    measurementId: "G-PG8BVMNF9D"
+};
+
+// 🔥 INITIALIZE FIREBASE
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore(); // Only Firestore needed for saving Cloudinary URLs
+</script>
+<script>
+const CLOUD_NAME = "dkv5ymfx5"; // Replace with your Cloudinary Cloud Name
+const UPLOAD_PRESET = "gallery_upload"; // Replace with your Unsigned preset name
+
+async function uploadImage() {
+    const fileInput = document.getElementById("imageInput");
+    const status = document.getElementById("status");
+
+    if (!fileInput.files.length) {
+        status.textContent = "Please select an image.";
+        return;
+    }
+
+    const file = fileInput.files[0];
+    status.textContent = "Uploading...";
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", UPLOAD_PRESET);
+
+    try {
+        const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+            method: "POST",
+            body: formData
+        });
+
+        const data = await res.json();
+
+        if (!data.secure_url) throw new Error("Upload failed");
+
+        // Save URL to Firestore
+        await db.collection("gallery").add({
+            imageUrl: data.secure_url,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        status.textContent = "✅ Image uploaded successfully!";
+        fileInput.value = "";
+    } catch (err) {
+        console.error(err);
+        status.textContent = "❌ Upload failed: " + err.message;
+    }
+}
+</script>
+
+<style>
+body { background:#f8fafc; font-family:Inter,sans-serif; }
+.navbar { background:#003366; color:#fff; padding:18px 24px; font-size:20px; }
+</style>
+</head>
+
+<body>
+
+<div class="navbar">Chill Thrive – Admin Gallery</div>
+
+<div class="max-w-xl mx-auto mt-10 bg-white p-6 rounded-xl shadow">
+  <h2 class="text-xl font-semibold mb-4 text-[#003366]">Upload Gallery Image</h2>
+
+  <input type="file" id="imageInput" accept="image/*"
+    class="w-full border p-2 rounded mb-4">
+
+  <button onclick="uploadImage()"
+    class="bg-[#003366] text-white px-6 py-2 rounded hover:opacity-90">
+    Upload Image
+  </button>
+
+  <p id="status" class="mt-4 text-sm text-gray-600"></p>
+</div>
+
+</body>
+</html>

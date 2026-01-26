@@ -1,0 +1,272 @@
+addslotstest:
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Chill Thrive</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="cdnjs.cloudflare.com" rel="stylesheet">
+</head>
+<body class="bg-slate-50 font-sans min-h-screen">
+
+    <!-- Navigation -->
+    <nav class="bg-blue-600 text-white shadow-lg p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold tracking-tight">CHILL <span class="font-light text-blue-100">THRIVE</span></h1>
+            <div class="flex space-x-6 items-center">
+                <a href="#" class="hover:text-blue-200 transition border-b-2 border-white pb-1 font-medium">Manage Slots</a>
+                <button class="bg-white text-blue-600 px-4 py-2 rounded-lg font-semibold hover:bg-blue-50 transition shadow-sm">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto mt-10 p-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Left Column: Form -->
+            <div class="lg:col-span-1 bg-white rounded-xl shadow-sm border border-blue-100 p-6 h-fit sticky top-10">
+                <h2 class="text-xl font-bold text-slate-800 mb-6 flex items-center">
+                    <i class="fa-solid fa-clock text-blue-500 mr-2"></i> Create New Slots
+                </h2>
+                <form id="slotForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Service Type</label>
+                        <select id="serviceType" class="w-full p-3 border border-slate-200 rounded-lg outline-none">
+                            <option value="Ice Bath">Ice Bath</option>
+                            <option value="Steam Bath">Steam Bath</option>
+                            <option value="Jacuzzi">Jacuzzi</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Date</label>
+                        <input id="slotDate" type="date" required class="w-full p-3 border border-slate-200 rounded-lg outline-none">
+                    </div>
+                    <div class="grid grid-cols-1 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Start Time (24h)</label>
+                            <select id="startTime" class="w-full p-3 border border-slate-200 rounded-lg font-mono outline-none"></select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">End Time (24h)</label>
+                            <select id="endTime" class="w-full p-3 border border-slate-200 rounded-lg font-mono outline-none"></select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Max Capacity</label>
+                        <input id="capacity" type="number" min="1" required class="w-full p-3 border border-slate-200 rounded-lg outline-none">
+                    </div>
+                    <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 transition-all active:scale-95">Add Time Slot</button>
+                </form>
+            </div>
+
+            <!-- Right Column: Slots View & Categories -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- CATEGORY NAVIGATION BUTTONS -->
+                <div class="flex space-x-3 overflow-x-auto pb-2" id="filterGroup">
+                    <button data-filter="All" class="filter-btn px-6 py-2 bg-blue-600 text-white rounded-full text-sm font-medium transition-all shadow-sm">All Services</button>
+                    <button data-filter="Ice Bath" class="filter-btn px-6 py-2 bg-white text-slate-600 border border-slate-200 rounded-full text-sm font-medium transition-all hover:border-blue-300">Ice Bath</button>
+                    <button data-filter="Steam Bath" class="filter-btn px-6 py-2 bg-white text-slate-600 border border-slate-200 rounded-full text-sm font-medium transition-all hover:border-blue-300">Steam Bath</button>
+                    <button data-filter="Jacuzzi" class="filter-btn px-6 py-2 bg-white text-slate-600 border border-slate-200 rounded-full text-sm font-medium transition-all hover:border-blue-300">Jacuzzi</button>
+                </div>
+
+                <!-- Table -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+                    <table class="w-full text-left">
+                        <thead class="bg-slate-50 border-b border-slate-100">
+                            <tr>
+                                <th class="px-6 py-4 text-sm font-semibold text-slate-600">Service</th>
+                                <th class="px-6 py-4 text-sm font-semibold text-slate-600">Date & Time</th>
+                                <th class="px-6 py-4 text-sm font-semibold text-slate-600">Capacity</th>
+                                <th class="px-6 py-4 text-sm font-semibold text-slate-600 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="slotsBody" class="divide-y divide-slate-100"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+     apiKey: "AIzaSyD8_xuBzMXPrhqoIyG8jLRZtWd2q0Lcsrs",
+    authDomain: "chill-thrive-8ec9c.firebaseapp.com",
+    projectId: "chill-thrive-8ec9c",
+    storageBucket: "chill-thrive-8ec9c.firebasestorage.app",
+    messagingSenderId: "620526540978",
+    appId: "1:620526540978:web:803517f456f8c2a15891ab",
+    measurementId: "G-PG8BVMNF9D"
+  };
+
+  window.app = initializeApp(firebaseConfig);
+  window.db = getFirestore(app);
+</script>
+
+    <script type="module">
+        import {
+  collection,
+  addDoc,
+  getDocs,
+  deleteDoc,
+  doc
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+const slotsRef = collection(db, "slots");
+
+
+        // --- 1. Init Data & Storage ---
+        let currentFilter = 'All';
+        let slots = [];
+
+async function loadSlotsFromFirebase() {
+  slots = [];
+
+  const snapshot = await getDocs(slotsRef);
+  snapshot.forEach(docSnap => {
+    slots.push({
+      id: docSnap.id,
+      ...docSnap.data()
+    });
+  });
+
+  renderSlots();
+}
+loadSlotsFromFirebase();
+
+
+        // --- 2. Clock Population ---
+        function populate24h() {
+            const start = document.getElementById('startTime');
+            const end = document.getElementById('endTime');
+            for (let h = 0; h < 24; h++) {
+                for (let m = 0; m < 60; m += 10) {
+                    const time = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+                    start.add(new Option(time, time));
+                    end.add(new Option(time, time));
+                }
+            }
+        }
+        document.addEventListener("DOMContentLoaded", () => {
+  populate24h();
+});
+
+
+        // --- 3. CATEGORY NAVIGATION LOGIC (The Fix) ---
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // UI: Reset all buttons
+                filterBtns.forEach(b => {
+                    b.classList.remove('bg-blue-600', 'text-white', 'shadow-sm');
+                    b.classList.add('bg-white', 'text-slate-600', 'border', 'border-slate-200');
+                });
+                // UI: Highlight active button
+                btn.classList.add('bg-blue-600', 'text-white', 'shadow-sm');
+                btn.classList.remove('bg-white', 'text-slate-600', 'border');
+                
+                // Logic: Set filter and re-render
+                currentFilter = btn.getAttribute('data-filter');
+                renderSlots();
+            });
+        });
+
+        // --- 4. Render Table ---
+        function renderSlots() {
+            const body = document.getElementById('slotsBody');
+            body.innerHTML = '';
+            
+            // Filter the array based on navigation selection
+            const filtered = currentFilter === 'All' ? slots : slots.filter(s => s.service === currentFilter);
+
+            if (filtered.length === 0) {
+                body.innerHTML = `<tr><td colspan="4" class="px-6 py-12 text-center text-slate-400 italic">No ${currentFilter} slots available.</td></tr>`;
+                return;
+            }
+
+            filtered.sort((a, b) => new Date(a.date + 'T' + a.start) - new Date(b.date + 'T' + b.start));
+
+            filtered.forEach(slot => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-blue-50/50 transition';
+                row.innerHTML = `
+                    <td class="px-6 py-4"><span class="px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-700 uppercase">${slot.service}</span></td>
+                    <td class="px-6 py-4">
+                        <div class="text-sm font-semibold text-slate-700">${slot.date}</div>
+                        <div class="text-xs text-blue-600 font-mono font-bold">${slot.start} — ${slot.end}</div>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-slate-500 font-mono">${slot.cap} Spots</td>
+                    <td class="px-6 py-4 text-right">
+                        <button onclick="deleteSlot('${slot.id}')" class="bg-red-50 text-red-600 px-4 py-1.5 rounded-lg text-[10px] font-black hover:bg-red-600 hover:text-white transition-all">DELETE</button>
+                    </td>
+                `;
+                body.appendChild(row);
+            });
+        }
+
+        // --- 5. Add & Delete ---
+        window.deleteSlot = async (id) => {
+  if (!confirm("Remove this slot?")) return;
+
+  await deleteDoc(doc(db, "slots", id));
+  loadSlotsFromFirebase();
+};
+
+
+       document.getElementById('slotForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const service = document.getElementById('serviceType').value;
+  const date = document.getElementById('slotDate').value;
+  const start = document.getElementById('startTime').value;
+  const end = document.getElementById('endTime').value;
+  const cap = Number(document.getElementById('capacity').value);
+
+  if (start >= end) {
+    alert("Invalid Time Range");
+    return;
+  }
+
+  await addDoc(slotsRef, {
+    service,
+    date,
+    start,
+    end,
+    cap,
+    createdAt: Date.now()
+  });
+
+  loadSlotsFromFirebase();
+});
+
+    </script>
+    <script>
+document.addEventListener("DOMContentLoaded", () => {
+  const selectedService = localStorage.getItem("selectedService");
+  if (!selectedService) return;
+
+  const serviceSelect = document.getElementById("serviceType");
+
+  // Try to match existing option
+  let found = false;
+  for (let opt of serviceSelect.options) {
+    if (opt.value === selectedService) {
+      serviceSelect.value = selectedService;
+      found = true;
+      break;
+    }
+  }
+
+  // If service does not exist, add it dynamically
+  if (!found) {
+    const newOption = new Option(selectedService, selectedService);
+    serviceSelect.add(newOption);
+    serviceSelect.value = selectedService;
+  }
+});
+</script>
+
+</body>
+</html>

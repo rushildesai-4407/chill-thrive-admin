@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin | Pending Reviews</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Poppins', sans-serif;
+}
+
+body{
+  background:#f8fafc;
+  color:#111;
+}
+
+/* HEADER */
+.header{
+  background:#003366;
+  color:#fff;
+  padding:20px;
+  text-align:center;
+}
+
+.header h1{
+  font-size:24px;
+}
+
+/* CONTAINER */
+.container{
+  max-width:1000px;
+  margin:40px auto;
+  padding:0 20px;
+}
+
+/* REVIEW CARD */
+.review-card{
+  background:#fff;
+  border-radius:16px;
+  padding:20px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.08);
+  margin-bottom:20px;
+}
+
+.review-card .name{
+  font-weight:600;
+  color:#003366;
+  margin-bottom:8px;
+}
+
+.review-card .feedback{
+  color:#444;
+  margin-bottom:15px;
+  line-height:1.5;
+}
+
+/* ACTION BUTTONS */
+.actions{
+  display:flex;
+  gap:12px;
+}
+
+.approve-btn{
+  background:#16a34a;
+  color:#fff;
+  border:none;
+  padding:8px 18px;
+  border-radius:10px;
+  cursor:pointer;
+  font-size:14px;
+}
+
+.reject-btn{
+  background:#dc2626;
+  color:#fff;
+  border:none;
+  padding:8px 18px;
+  border-radius:10px;
+  cursor:pointer;
+}
+
+.approve-btn:hover,
+.reject-btn:hover{
+  opacity:0.9;
+}
+
+/* EMPTY STATE */
+.empty{
+  text-align:center;
+  color:#666;
+  margin-top:60px;
+  font-size:15px;
+}
+</style>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+</head>
+
+<body>
+
+<div class="header">
+  <h1>Pending Reviews</h1>
+</div>
+
+<div class="container">
+  <div id="pendingReviews"></div>
+</div>
+
+<script>
+const firebaseConfig = {
+   apiKey: "AIzaSyD8_xuBzMXPrhqoIyG8jLRZtWd2q0Lcsrs",
+    authDomain: "chill-thrive-8ec9c.firebaseapp.com",
+    projectId: "chill-thrive-8ec9c",
+    storageBucket: "chill-thrive-8ec9c.firebasestorage.app",
+    messagingSenderId: "620526540978",
+    appId: "1:620526540978:web:803517f456f8c2a15891ab",
+    measurementId: "G-PG8BVMNF9D"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+db.collection("reviews")
+.where("status", "==", "pending")
+.onSnapshot(snapshot => {
+
+  const container = document.getElementById("pendingReviews");
+  container.innerHTML = "";
+
+  if(snapshot.empty){
+    container.innerHTML = `<div class="empty">No pending reviews 🎉</div>`;
+    return;
+  }
+
+  snapshot.forEach(doc => {
+    const r = doc.data();
+
+    container.innerHTML += `
+      <div class="review-card">
+        <div class="name">${r.name}</div>
+        <div class="feedback">${r.feedback}</div>
+
+        <div class="actions">
+          <button class="approve-btn" onclick="approveReview('${doc.id}')">Approve</button>
+          <button class="reject-btn" onclick="deleteReview('${doc.id}')">Reject</button>
+        </div>
+      </div>
+    `;
+  });
+});
+
+function approveReview(id){
+  db.collection("reviews").doc(id).update({
+    status: "approved",
+    approvedAt: firebase.firestore.FieldValue.serverTimestamp()
+  });
+}
+
+function deleteReview(id){
+  if(confirm("Are you sure you want to reject this review?")){
+    db.collection("reviews").doc(id).delete();
+  }
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chill Thrive | Admin Login</title>
+    <style>
+        :root {
+            --deep-blue: #003366; 
+            --ice-blue: #00AEEF;   
+            --snow-white: #FFFFFF;
+            --soft-gray: #F4F7F9;
+            --error-red: #ff3333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--soft-gray);
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-box {
+            background: var(--snow-white);
+            width: 380px;
+            padding: 40px;
+            border-top: 5px solid var(--ice-blue);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+
+        .brand-logo {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--deep-blue);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 30px;
+        }
+
+        .brand-logo span { color: var(--ice-blue); }
+
+        .input-label {
+            display: block;
+            font-size: 12px;
+            font-weight: bold;
+            color: #666;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #D1D9E0;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        .login-btn {
+            width: 100%;
+            background-color: var(--deep-blue);
+            color: white;
+            padding: 14px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .login-btn:hover { background-color: var(--ice-blue); }
+
+        #error-message {
+            color: var(--error-red);
+            font-size: 14px;
+            margin-bottom: 15px;
+            text-align: center;
+            display: none;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-box">
+    <div class="brand-logo">CHILL <span>THRIVE</span></div>
+    
+    <div id="error-message">Access Denied: Incorrect Credentials</div>
+
+    <form id="loginForm">
+        <label class="input-label">Admin Username</label>//username:admin
+        <input type="text" id="username" placeholder="Enter username" required>
+
+        <label class="input-label">Security Password</label>//password:chill2026
+        <input type="password" id="password" placeholder="Enter password" required>
+
+        <button type="submit" class="login-btn">LOG IN</button>
+    </form>
+</div>
+
+<script>
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const user = document.getElementById('username').value;
+        const pass = document.getElementById('password').value;
+        const errorDisplay = document.getElementById('error-message');
+
+        // Set your desired credentials here
+        const correctUser = "admin";
+        const correctPass = "chill2026";
+
+        if (user === correctUser && pass === correctPass) {
+            // Success: Redirect to the simple page
+            window.location.href = "main.html"; 
+        } else {
+            // Failure: Show error message
+            errorDisplay.style.display = "block";
+            document.getElementById('password').value = "";
+        }
+    });
+</script>
+
+</body>
+</html>

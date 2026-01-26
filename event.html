@@ -1,0 +1,262 @@
+event admin code:
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Chill Thrive | Master Admin 2026</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    :root { --brand-blue: #003366; }
+    body { background:#f8fafc; font-family:'Inter', sans-serif; }
+
+    /* NAVBAR */
+    .navbar {
+      position: fixed; top:0; left:0; width:100%; height:80px; background:var(--brand-blue); z-index:50;
+    }
+    .navbar-inner {
+      max-width:1200px; margin:auto; height:100%; padding:0 24px;
+      display:grid; grid-template-columns:auto 1fr auto; align-items:center; color:white;
+    }
+    .logo { height:40px; }
+    .nav-title { text-align:center; line-height:1.2; }
+    .nav-title h1 { font-size:20px; font-weight:700; letter-spacing:1px; }
+    .nav-title span { font-size:12px; opacity:0.8; }
+    .exit-btn { border:2px solid white; padding:8px 16px; border-radius:8px; font-weight:600; transition:0.3s; }
+    .exit-btn:hover { background:white; color:#003366; }
+
+    /* MODAL */
+    .modal {
+      position:fixed; inset:0; background:rgba(0,0,0,0.6);
+      display:none; align-items:center; justify-content:center; z-index:100;
+    }
+    .modal-content {
+      background:white; width:100%; max-width:500px; padding:24px; border-radius:14px; max-height:90vh; overflow:auto;
+    }
+    .modal-content label { font-size:13px; font-weight:600; margin-top:10px; display:block; }
+    .modal-content input, .modal-content textarea {
+      width:100%; padding:8px; margin-top:4px; border:1px solid #ddd; border-radius:8px;
+    }
+    .preview { width:100%; height:180px; object-fit:cover; border-radius:10px; margin-top:10px; display:none; }
+    .modal-actions { display:flex; gap:10px; margin-top:16px; }
+    .modal-actions button { flex:1; padding:10px; border-radius:8px; font-weight:600; background:#003366; color:white; }
+    .modal-actions .cancel { background:#ddd; color:#333; }
+
+    /* EVENTS CONTAINER */
+    .events-container {
+      display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:20px; margin-top:30px;
+    }
+    .event-card {
+      background:white; border-radius:14px; overflow:hidden; box-shadow:0 6px 12px rgba(0,0,0,.08);
+    }
+    .event-card img { width:100%; height:180px; object-fit:cover; }
+    .event-body { padding:14px; }
+    .event-body h3 { font-size:18px; font-weight:700; margin:6px 0; }
+    .event-body small { color:#666; }
+    .card-footer { display:flex; justify-content:space-between; align-items:center; margin-top:10px; }
+    .join-btn { background:#003366; color:white; padding:6px 12px; border-radius:6px; }
+    .edit-btn { color:#2563eb; font-weight:600; cursor:pointer; }
+    .delete-btn { color:#dc2626; font-weight:600; cursor:pointer; }
+
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<header class="navbar">
+  <div class="navbar-inner">
+    <a href="index.html"><img src="Chillthrivelogo.jpeg" alt="Logo" class="logo"></a>
+    <div class="nav-title">
+      <h1>Chill Thrive</h1>
+      <span>Ice Bath Center</span>
+    </div>
+    <a href="main.html" class="exit-btn">Exit</a>
+  </div>
+</header>
+
+<!-- MAIN CONTENT -->
+<main class="pt-[100px] max-w-7xl mx-auto px-6">
+
+  <!-- EVENTS SECTION -->
+  <section id="events" class="mb-16">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-2xl font-bold text-gray-800">Event Management & Gallery</h2>
+      <button type="button" onclick="openModal()" class="bg-blue-600 text-white px-5 py-2 rounded-lg font-semibold hover:bg-blue-700 transition">
+        + Add New Event
+      </button>
+    </div>
+
+    <!-- EVENTS CONTAINER -->
+    <div class="events-container" id="eventsContainer"></div>
+  </section>
+
+</main>
+
+<!-- MODAL -->
+<div class="modal" id="eventModal">
+  <div class="modal-content">
+    <h2 id="modalTitle">Add New Event</h2>
+    <input type="hidden" id="editIndex">
+
+    <label>Event Image</label>
+    <input type="file" accept="image/*" onchange="previewImage(event)">
+    <img id="imagePreview" class="preview">
+
+    <label>Date</label>
+    <input type="date" id="date">
+
+    <label>Time</label>
+    <input type="time" id="time">
+
+    <label>Title</label>
+    <input type="text" id="titleInput">
+
+    <label>Description</label>
+    <textarea id="description"></textarea>
+
+    <label>Price Info</label>
+    <input type="text" id="price">
+
+    <div class="modal-actions">
+      <button type="button" onclick="saveEvent()">Save</button>
+      <button type="button" class="cancel" onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- SCRIPT -->
+<script>
+window.onload = function() {
+    const eventModal = document.getElementById("eventModal");
+    const modalTitle = document.getElementById("modalTitle");
+    const editIndex = document.getElementById("editIndex");
+    const date = document.getElementById("date");
+    const time = document.getElementById("time");
+    const titleInput = document.getElementById("titleInput");
+    const description = document.getElementById("description");
+    const price = document.getElementById("price");
+    const imagePreview = document.getElementById("imagePreview");
+    const eventsContainer = document.getElementById("eventsContainer");
+
+    let events = JSON.parse(localStorage.getItem("chillthrive_events")) || [];
+    let uploadedImage = "";
+
+    // OPEN MODAL
+    window.openModal = function(edit=false){
+        eventModal.style.display="flex";
+        modalTitle.innerText = edit ? "Edit Event" : "Add New Event";
+    }
+
+    // CLOSE MODAL
+    window.closeModal = function(){
+        eventModal.style.display="none";
+        clearForm();
+    }
+
+    function clearForm(){
+        [date, time, titleInput, description, price].forEach(i => i.value = "");
+        imagePreview.style.display = "none";
+        uploadedImage = "";
+        editIndex.value = "";
+    }
+
+    // IMAGE PREVIEW
+    window.previewImage = function(e){
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.onload = () => {
+            uploadedImage = reader.result;
+            imagePreview.src = uploadedImage;
+            imagePreview.style.display="block";
+        };
+        reader.readAsDataURL(file);
+    }
+
+    // SAVE EVENT
+    window.saveEvent = function(){
+        if(!titleInput.value || !uploadedImage) {
+            alert("Please add title and image");
+            return;
+        }
+        const data = {
+            image: uploadedImage,
+            date: date.value,
+            time: time.value,
+            title: titleInput.value,
+            description: description.value,
+            price: price.value,
+        };
+
+        if(editIndex.value === "") {
+            events.push(data);
+        } else {
+            events[editIndex.value] = data;
+        }
+        localStorage.setItem("chillthrive_events", JSON.stringify(events));
+        renderEvents();
+        closeModal();
+    }
+
+    // RENDER EVENTS
+    function renderEvents(){
+    eventsContainer.innerHTML = "";
+    events.forEach((e,i)=>{
+        eventsContainer.innerHTML += `
+            <div class="event-card">
+                <img src="${e.image}">
+                <div class="event-body">
+                    <small>${e.date} • ${e.time}</small>
+                    <h3>${e.title}</h3>
+                    <p>${e.description}</p>
+
+                    <!-- PRICE (INFO ONLY) -->
+                    <div class="card-footer">
+                        <span>${e.price}</span>
+                    </div>
+
+                    <!-- ADMIN ACTIONS -->
+                    <div class="card-footer">
+                        <button class="edit-btn" onclick="editEvent(${i})">Edit</button>
+                        <button class="delete-btn" onclick="deleteEvent(${i})">Remove</button>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+}
+
+
+    // EDIT EVENT
+    window.editEvent = function(i){
+        const e = events[i];
+        date.value = e.date;
+        time.value = e.time;
+        titleInput.value = e.title;
+        description.value = e.description;
+        price.value = e.price;
+        uploadedImage = e.image;
+        imagePreview.src = e.image;
+        imagePreview.style.display="block";
+        editIndex.value = i;
+        openModal(true);
+    }
+
+    // DELETE EVENT
+    window.deleteEvent = function(i){
+        events.splice(i,1);
+        localStorage.setItem("chillthrive_events", JSON.stringify(events));
+        renderEvents();
+    }
+    renderEvents();
+
+}
+</script>
+
+</body>
+</html>

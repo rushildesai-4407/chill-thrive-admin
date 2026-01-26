@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin | Active Bookings</title>
+
+<style>
+:root{
+  --nav:#003366;
+  --blue:#1F6FB2;
+  --red:#D64545;
+  --soft:#EAF3FC;
+  --border:#D6E6F5;
+  --text:#0B1F3B;
+  --shadow:0 12px 30px rgba(13,52,117,.12);
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:Helvetica Neue,Arial,sans-serif;
+  background:#F3F8FE;
+  color:var(--text);
+}
+
+/* NAVBAR */
+.navbar{
+  background:var(--nav);
+  color:#fff;
+  padding:18px 24px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.nav-title{
+  font-size:22px;
+  font-weight:bold;
+}
+
+.menu{
+  font-size:26px;
+  cursor:pointer;
+}
+
+/* SIDEBAR */
+.sidebar{
+  position:fixed;
+  top:0; right:-260px;
+  width:260px; height:100%;
+  background:#002244;
+  padding:30px;
+  transition:0.4s;
+  z-index:1000;
+}
+
+.sidebar.active{ right:0 }
+
+.sidebar a{
+  display:block;
+  color:white;
+  text-decoration:none;
+  margin:18px 0;
+  font-size:16px;
+}
+
+.close-btn{
+  color:white;
+  font-size:26px;
+  text-align:right;
+  cursor:pointer;
+}
+
+/* PAGE */
+.container{
+  max-width:1200px;
+  margin:40px auto;
+  padding:0 20px;
+}
+
+.page-title{
+  font-size:28px;
+  margin-bottom:20px;
+}
+
+/* TABLE */
+.table-wrap{
+  background:#fff;
+  border-radius:14px;
+  box-shadow:var(--shadow);
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:1100px;
+}
+
+thead{
+  background:var(--soft);
+}
+
+th,td{
+  padding:14px 12px;
+  text-align:left;
+  font-size:14px;
+  border-bottom:1px solid var(--border);
+}
+
+th{
+  font-weight:600;
+  color:#234;
+}
+
+/* ACTION BUTTONS */
+.action-group{
+  display:flex;
+  gap:8px;
+}
+
+.reschedule-btn{
+  padding:7px 14px;
+  border:none;
+  border-radius:20px;
+  background:var(--blue);
+  color:white;
+  font-size:13px;
+  cursor:pointer;
+  transition:.25s;
+}
+
+.reschedule-btn:hover{
+  background:#155a96;
+}
+
+.cancel-btn{
+  padding:7px 14px;
+  border:none;
+  border-radius:20px;
+  background:var(--red);
+  color:white;
+  font-size:13px;
+  cursor:pointer;
+  transition:.25s;
+}
+
+.cancel-btn:hover{
+  background:#b73737;
+}
+
+@media(max-width:800px){
+  th,td{font-size:13px}
+}
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+  <div class="nav-title">Chill Thrive — Admin</div>
+  <div class="menu" onclick="toggleMenu()">☰</div>
+</div>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <div class="close-btn" onclick="closemenu()">×</div>
+  <a href="#">Dashboard</a>
+  <a href="#">Active Bookings</a>
+  <a href="#">Manage Slots</a>
+  <a href="#">Gallery</a>
+  <a href="#">Logout</a>
+</div>
+
+<!-- CONTENT -->
+<div class="container">
+  <div class="page-title">Active Bookings</div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>User Name</th>
+          <th>Service</th>
+          <th>Appointment Date</th>
+          <th>Time Slot</th>
+          <th>Gender</th>
+          <th>Phone</th>
+          <th>Email</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+
+      <tbody id="bookingTableBody"></tbody>
+
+    </table>
+  </div>
+</div>
+<!-- FIREBASE FIRST -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyD8_xuBzMXPrhqoIyG8jLRZtWd2q0Lcsrs",
+    authDomain: "chill-thrive-8ec9c.firebaseapp.com",
+    projectId: "chill-thrive-8ec9c",
+    storageBucket: "chill-thrive-8ec9c.firebasestorage.app",
+    messagingSenderId: "620526540978",
+    appId: "1:620526540978:web:803517f456f8c2a15891ab",
+    measurementId: "G-PG8BVMNF9D"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+</script>
+
+<!-- NOW YOUR BOOKING QUERY -->
+<script>
+const tbody = document.getElementById("bookingTableBody");
+
+db.collection("bookings")
+  .where("status", "==", "ACTIVE")
+  .onSnapshot(snapshot => {
+    tbody.innerHTML = "";
+
+    snapshot.forEach(doc => {
+      const b = doc.data();
+       if (isExpired(b.date, b.time)) {
+    db.collection("bookings").doc(doc.id).update({
+      status: "COMPLETED"
+    });
+    return;
+  }
+
+
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${b.firstName} ${b.lastName}</td>
+        <td>${b.service}</td>
+        <td>${formatDateDDMMYYYY(b.date)}</td>
+        <td>${b.time}</td>
+        <td>${b.gender}</td>
+        <td>${b.phone}</td>
+        <td>${b.email}</td>
+        <td>
+          <button class="cancel-btn" onclick="cancelBooking('${doc.id}')">
+            Cancel
+          </button>
+        </td>
+      `;
+      tbody.appendChild(row);
+    });
+  });
+
+
+
+
+
+
+function cancelBooking(id){
+  const reason = prompt(
+    "Enter reason for cancellation (this will be emailed to the customer):"
+  );
+
+  if(!reason) return;
+
+  if(confirm("Cancel this appointment and notify the customer?")){
+    db.collection("bookings").doc(id).get().then(docSnap => {
+
+      if(!docSnap.exists) return;
+
+      const b = docSnap.data();
+
+      // 1️⃣ Update booking status
+      db.collection("bookings").doc(id).update({
+        status: "CANCELLED"
+      });
+
+      // 2️⃣ Send cancellation email
+      sendCancellationEmail(b, reason);
+
+      alert("Booking cancelled & email sent");
+    })
+    .catch(err => {
+      console.error(err);
+      alert("Error cancelling booking");
+    });
+  }
+}
+
+
+
+</script>
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
+<script>
+  (function(){
+    emailjs.init("07YNY8Kw0hXbiRAQH"); // 👈 EmailJS Public Key
+  })();
+</script>
+<script>
+function sendCancellationEmail(booking, reason){
+
+  const templateParams = {
+    name: booking.firstName + " " + booking.lastName,
+    email: booking.email,
+    service: booking.service,
+    date: booking.date,
+    time: booking.time,
+    reason: reason
+  };
+
+  emailjs.send(
+    "chillthrive_2026",     // 👈 EmailJS service ID
+    "template_eeb05tt",    // 👈 cancellation template ID
+    templateParams
+  )
+  .then(() => {
+    console.log("📧 Cancellation email sent");
+  })
+  .catch(err => {
+    console.error("❌ Email failed:", err);
+  });
+}
+</script>
+<script>
+function isExpired(date, time){
+  const appointment = new Date(`${date} ${time}`);
+  return appointment < new Date();
+}
+</script>
+<script>
+function formatDateDDMMYYYY(dateStr){
+  const [yyyy, mm, dd] = dateStr.split("-");
+  return `${dd}-${mm}-${yyyy}`;
+}
+</script>
+
+
+
+
+
+</body>
+</html>
