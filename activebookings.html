@@ -229,12 +229,13 @@ db.collection("bookings")
 
     snapshot.forEach(doc => {
       const b = doc.data();
-       if (isExpired(b.date, b.time)) {
-    db.collection("bookings").doc(doc.id).update({
-      status: "COMPLETED"
-    });
-    return;
-  }
+       if (b.appointmentAt && isExpired(b.appointmentAt)) {
+  db.collection("bookings").doc(doc.id).update({
+    status: "COMPLETED"
+  });
+  return;
+}
+
 
 
       const row = document.createElement("tr");
@@ -328,10 +329,10 @@ function sendCancellationEmail(booking, reason){
 }
 </script>
 <script>
-function isExpired(date, time){
-  const appointment = new Date(`${date} ${time}`);
-  return appointment < new Date();
+function isExpired(appointmentAt){
+  return appointmentAt.toDate() < new Date();
 }
+
 </script>
 <script>
 function formatDateDDMMYYYY(dateStr){
