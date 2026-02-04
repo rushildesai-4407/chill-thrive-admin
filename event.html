@@ -1,262 +1,750 @@
-event admin code:
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Chill Thrive | Master Admin 2026</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Events | Chill Thrive</title>
 
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-  <!-- Font Awesome Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
 
-  <style>
-    :root { --brand-blue: #003366; }
-    body { background:#f8fafc; font-family:'Inter', sans-serif; }
+body{
+  font-family:'Inter',sans-serif;
+  background:linear-gradient(180deg,#0F172A,#EAF2FF);
+  color:#0B1F3B;
+  padding-top:90px;
+}
 
-    /* NAVBAR */
-    .navbar {
-      position: fixed; top:0; left:0; width:100%; height:80px; background:var(--brand-blue); z-index:50;
-    }
-    .navbar-inner {
-      max-width:1200px; margin:auto; height:100%; padding:0 24px;
-      display:grid; grid-template-columns:auto 1fr auto; align-items:center; color:white;
-    }
-    .logo { height:40px; }
-    .nav-title { text-align:center; line-height:1.2; }
-    .nav-title h1 { font-size:20px; font-weight:700; letter-spacing:1px; }
-    .nav-title span { font-size:12px; opacity:0.8; }
-    .exit-btn { border:2px solid white; padding:8px 16px; border-radius:8px; font-weight:600; transition:0.3s; }
-    .exit-btn:hover { background:white; color:#003366; }
+/* ================= NAVBAR (UNCHANGED) ================= */
 
-    /* MODAL */
-    .modal {
-      position:fixed; inset:0; background:rgba(0,0,0,0.6);
-      display:none; align-items:center; justify-content:center; z-index:100;
-    }
-    .modal-content {
-      background:white; width:100%; max-width:500px; padding:24px; border-radius:14px; max-height:90vh; overflow:auto;
-    }
-    .modal-content label { font-size:13px; font-weight:600; margin-top:10px; display:block; }
-    .modal-content input, .modal-content textarea {
-      width:100%; padding:8px; margin-top:4px; border:1px solid #ddd; border-radius:8px;
-    }
-    .preview { width:100%; height:180px; object-fit:cover; border-radius:10px; margin-top:10px; display:none; }
-    .modal-actions { display:flex; gap:10px; margin-top:16px; }
-    .modal-actions button { flex:1; padding:10px; border-radius:8px; font-weight:600; background:#003366; color:white; }
-    .modal-actions .cancel { background:#ddd; color:#333; }
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
 
-    /* EVENTS CONTAINER */
-    .events-container {
-      display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:20px; margin-top:30px;
-    }
-    .event-card {
-      background:white; border-radius:14px; overflow:hidden; box-shadow:0 6px 12px rgba(0,0,0,.08);
-    }
-    .event-card img { width:100%; height:180px; object-fit:cover; }
-    .event-body { padding:14px; }
-    .event-body h3 { font-size:18px; font-weight:700; margin:6px 0; }
-    .event-body small { color:#666; }
-    .card-footer { display:flex; justify-content:space-between; align-items:center; margin-top:10px; }
-    .join-btn { background:#003366; color:white; padding:6px 12px; border-radius:6px; }
-    .edit-btn { color:#2563eb; font-weight:600; cursor:pointer; }
-    .delete-btn { color:#dc2626; font-weight:600; cursor:pointer; }
+/* ================= NAVBAR ================= */
 
-  </style>
+.navbar{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:90px;
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+
+  padding:0 6%;
+  background:#16213E;
+  border-bottom:1px solid rgba(255,255,255,0.08);
+  box-shadow:0 6px 25px rgba(0,0,0,0.35);
+  z-index:1000;
+}
+
+/* GOLDEN LUXURY LINE */
+.navbar::after{
+  content:"";
+  position:absolute;
+  bottom:0;
+  left:0;
+  width:100%;
+  height:2px;
+  background:linear-gradient(
+    to right,
+    transparent,
+    rgba(239,192,123,0.65),
+    transparent
+  );
+}
+
+/* LEFT */
+.nav-left{
+  display:flex;
+  align-items:center;
+  z-index:2;
+}
+
+.nav-logo{
+  height:68px;
+}
+
+/* CENTER */
+.nav-center{
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+  text-align:center;
+  pointer-events:none;
+  z-index:1;
+}
+
+.brand-main{
+  font-family:'Playfair Display', serif;
+  font-size:1.55rem;
+  letter-spacing:4px;
+  color:#fff;
+}
+
+.brand-sub{
+  font-family:'Inter', sans-serif;
+  font-size:0.75rem;
+  letter-spacing:3px;
+  text-transform:uppercase;
+  color:#EFC07B;
+}
+
+/* RIGHT */
+.nav-right{
+  display:flex;
+  align-items:center;
+  z-index:3;
+}
+
+.menu-toggle{
+  background:none;
+  border:none;
+  font-size:30px;
+  color:#EFC07B;
+  cursor:pointer;
+}
+
+/* ================= SIDEBAR ================= */
+
+.sidebar{
+  position:fixed;
+  top:0;
+  right:-100%;
+  width:350px;
+  height:100%;
+
+  background:#0F172A;
+  border-left:1px solid rgba(255,255,255,0.08);
+  box-shadow:-20px 0 45px rgba(0,0,0,0.55);
+
+  padding:100px 40px;
+  transition:0.55s cubic-bezier(0.77,0,0.175,1);
+  z-index:3000;
+}
+
+.sidebar.active{
+  right:0;
+}
+
+.sidebar-close{
+  position:absolute;
+  top:28px;
+  right:70px;
+  font-size:32px;
+  background:none;
+  border:none;
+  color:#fff;
+  cursor:pointer;
+}
+
+.sidebar a{
+  display:flex;
+  align-items:center;
+  gap:14px;
+
+  font-family:'Playfair Display', serif;
+  font-size:1.8rem;
+  color:#fff;
+  text-decoration:none;
+  margin-bottom:15px;
+  transition:0.3s ease;
+}
+
+.sidebar a:hover,
+.sidebar a.active{
+  color:#EFC07B;
+  transform:translateX(12px);
+}
+
+.sidebar i{
+  font-size:0.9rem;
+  width:18px;
+}
+
+/* ================= OVERLAY ================= */
+
+.overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.55);
+  display:none;
+  z-index:2500;
+}
+
+.overlay.active{
+  display:block;
+}
+
+/* MOBILE */
+@media(max-width:768px){
+  .nav-center{display:none;}
+  .sidebar{width:100%;}
+}
+
+/* SIDEBAR (UNCHANGED) */
+
+.sidebar{
+  position:fixed;
+  top:0;
+  right:-100%;
+  width:360px;
+  height:100%;
+  background:#0F172A;
+  border-left:1px solid rgba(255,255,255,0.08);
+  box-shadow:-20px 0 45px rgba(0,0,0,0.55);
+  padding:110px 40px;
+  transition:0.55s cubic-bezier(0.77,0,0.175,1);
+  z-index:3000;
+}
+.sidebar.active{right:0;}
+
+.sidebar-close{
+  position:absolute;
+  top:28px;
+  right:35px;
+  font-size:32px;
+  background:none;
+  border:none;
+  color:#fff;
+  cursor:pointer;
+}
+
+.sidebar a{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  font-family:'Playfair Display',serif;
+  font-size:1.8rem;
+  color:#fff;
+  text-decoration:none;
+  margin-bottom:26px;
+  transition:0.3s;
+}
+
+.sidebar a:hover,
+.sidebar a.active{
+  color:#EFC07B;
+  transform:translateX(12px);
+}
+
+.overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.55);
+  display:none;
+  z-index:2500;
+}
+.overlay.active{display:block;}
+
+/* ================= EVENTS HERO ================= */
+
+.events-hero{
+  text-align:center;
+  padding:110px 20px 80px;
+  color:#fff;
+}
+
+.events-hero h1{
+  font-family:'Playfair Display',serif;
+  font-size:3rem;
+  margin-bottom:16px;
+}
+
+.events-hero p{
+  max-width:700px;
+  margin:auto;
+  font-size:1.05rem;
+  opacity:0.9;
+}
+
+/* ================= EVENTS GRID ================= */
+
+.events-grid{
+  max-width:1200px;
+  margin:0 auto 120px;
+  padding:0 24px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+  gap:46px;
+}
+
+/* ================= EVENT CARD ================= */
+
+.event-card{
+  background:rgba(255,255,255,0.75);
+  backdrop-filter:blur(18px);
+  border-radius:22px;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,0.35);
+  box-shadow:0 40px 90px rgba(15,23,42,0.25);
+  transition:0.45s;
+  position:relative;
+}
+
+.event-card:hover{
+  transform:translateY(-14px);
+}
+
+.event-img{
+  width:100%;
+  height:220px;
+  object-fit:cover;
+}
+
+.member-badge{
+  position:absolute;
+  top:18px;
+  left:18px;
+  background:rgba(255,255,255,0.9);
+  padding:6px 14px;
+  border-radius:20px;
+  font-size:11px;
+  letter-spacing:2px;
+  font-weight:600;
+  color:#16213E;
+}
+
+.event-content{
+  padding:30px;
+}
+
+.event-date{
+  font-size:12px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  color:#16213E;
+  margin-bottom:14px;
+  display:block;
+}
+
+.event-title{
+  font-family:'Playfair Display',serif;
+  font-size:1.45rem;
+  margin-bottom:14px;
+}
+
+.event-desc{
+  font-size:0.95rem;
+  color:#5C6B82;
+  line-height:1.6;
+  margin-bottom:26px;
+}
+
+.event-footer{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border-top:1px solid rgba(0,0,0,0.08);
+  padding-top:18px;
+}
+
+.price{
+  font-weight:600;
+}
+
+.btn{
+  padding:10px 26px;
+  border-radius:30px;
+  background:#16213E;
+  color:#EFC07B;
+  text-decoration:none;
+  font-size:0.85rem;
+}
+
+/* FOOTER */
+
+:root{
+  --white:#FFFFFF;
+  --accent-gold:#EFC07B;
+}
+
+/* ---------- RESET ---------- */
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+/* ================= FOOTER ================= */
+
+.grand-footer{
+  background:#0F172A;
+  color:var(--white);
+  padding:50px 6% 25px;
+  font-family:'Inter', sans-serif;
+}
+
+/* ---------- DIVIDER ---------- */
+.footer-divider{
+  border:0;
+  border-top:1px solid rgba(255,255,255,0.1);
+  margin-bottom:35px;
+}
+
+/* ---------- MAIN GRID ---------- */
+.footer-main{
+  display:grid;
+  grid-template-columns:1.4fr 1fr 1fr 1fr;
+  gap:30px;
+  margin-bottom:45px;
+}
+
+.footer-logo{
+  height:45px;
+  margin-bottom:12px;
+}
+
+/* ---------- COLUMNS ---------- */
+.footer-col h4{
+  color:var(--accent-gold);
+  text-transform:uppercase;
+  font-size:0.7rem;
+  letter-spacing:2px;
+  margin-bottom:18px;
+}
+
+.footer-col a{
+  display:block;
+  color:var(--white);
+  text-decoration:none;
+  opacity:0.65;
+  margin-bottom:8px;
+  font-size:0.85rem;
+  transition:0.3s ease;
+}
+
+.footer-col a:hover{
+  opacity:1;
+  color:var(--accent-gold);
+  transform:translateX(4px);
+}
+
+.footer-phone{
+  font-size:1rem;
+  font-weight:600;
+  margin-bottom:6px;
+}
+
+/* ---------- BRAND STRIP ---------- */
+.brand-strip{
+  display:flex;
+  justify-content:space-between;
+  padding:22px 0;
+  border-top:1px solid rgba(255,255,255,0.1);
+  border-bottom:1px solid rgba(255,255,255,0.1);
+  margin-bottom:25px;
+  opacity:0.45;
+  font-family:'Playfair Display', serif;
+  font-style:italic;
+}
+
+/* ---------- BOTTOM ---------- */
+.footer-bottom{
+  display:flex;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:15px;
+}
+
+.social-links a{
+  font-size:2rem;
+  margin-right:15px;
+  
+  
+  transition:0.3s;
+}
+
+.social-links a:hover{
+  opacity:1;
+  color:white;
+}
+
+.legal-links a{
+  font-size:0.7rem;
+  opacity:0.5;
+  margin-right:12px;
+  color:var(--white);
+  text-decoration:none;
+}
+
+.legal-links a:hover{
+  opacity:1;
+  color:var(--accent-gold);
+}
+
+.copyright{
+  width:100%;
+  margin-top:15px;
+  text-align:center;
+  font-size:0.7rem;
+  opacity:0.4;
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media(max-width:900px){
+  .footer-main{grid-template-columns:1fr 1fr;}
+  .brand-strip{flex-direction:column; gap:8px;}
+}
+
+@media(max-width:600px){
+  .footer-main{grid-template-columns:1fr;}
+  .footer-bottom{flex-direction:column; text-align:center;}
+}
+</style>
+    </style>
+       <link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>.social-links{
+  display:flex;
+  gap:18px;
+  align-items:center;
+}
+
+.social-icon{
+  font-size:28px;
+  cursor:pointer;
+  transition:transform 0.25s ease, color 0.25s ease;
+}
+
+.social-icon:hover{
+  transform:scale(1.15);
+}
+
+/* Brand colors */
+.instagram{ color:#d4507c; }
+.instagram:hover{ color:#C13584; }
+
+.facebook{ color:#1877F2; }
+.facebook:hover{ color:#145DBF; }
+
+.x{ color:white; }
+.x:hover{ color:#444; }
+
+
+/* MOBILE */
+@media(max-width:768px){
+  .nav-center{display:none;}
+  .sidebar{width:100%;}
+}
+</style>
 </head>
+
 <body>
 
 <!-- NAVBAR -->
-<header class="navbar">
-  <div class="navbar-inner">
-    <a href="index.html"><img src="Chillthrivelogo.jpeg" alt="Logo" class="logo"></a>
-    <div class="nav-title">
-      <h1>Chill Thrive</h1>
-      <span>Ice Bath Center</span>
-    </div>
-    <a href="main.html" class="exit-btn">Exit</a>
+<nav class="navbar">
+  <div class="nav-left">
+    <img src="chillthrive.png" class="nav-logo" alt="Chill Thrive">
   </div>
-</header>
 
-<!-- MAIN CONTENT -->
-<main class="pt-[100px] max-w-7xl mx-auto px-6">
-
-  <!-- EVENTS SECTION -->
-  <section id="events" class="mb-16">
-    <div class="flex justify-between items-center mb-6">
-      <h2 class="text-2xl font-bold text-gray-800">Event Management & Gallery</h2>
-      <button type="button" onclick="openModal()" class="bg-blue-600 text-white px-5 py-2 rounded-lg font-semibold hover:bg-blue-700 transition">
-        + Add New Event
-      </button>
-    </div>
-
-    <!-- EVENTS CONTAINER -->
-    <div class="events-container" id="eventsContainer"></div>
-  </section>
-
-</main>
-
-<!-- MODAL -->
-<div class="modal" id="eventModal">
-  <div class="modal-content">
-    <h2 id="modalTitle">Add New Event</h2>
-    <input type="hidden" id="editIndex">
-
-    <label>Event Image</label>
-    <input type="file" accept="image/*" onchange="previewImage(event)">
-    <img id="imagePreview" class="preview">
-
-    <label>Date</label>
-    <input type="date" id="date">
-
-    <label>Time</label>
-    <input type="time" id="time">
-
-    <label>Title</label>
-    <input type="text" id="titleInput">
-
-    <label>Description</label>
-    <textarea id="description"></textarea>
-
-    <label>Price Info</label>
-    <input type="text" id="price">
-
-    <div class="modal-actions">
-      <button type="button" onclick="saveEvent()">Save</button>
-      <button type="button" class="cancel" onclick="closeModal()">Cancel</button>
-    </div>
+  <div class="nav-center">
+    <div class="brand-main">CHILL THRIVE</div>
+    <div class="brand-sub">Ice Bath Center</div>
   </div>
+
+  <div class="nav-right">
+    <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+  </div>
+</nav>
+
+<!-- OVERLAY -->
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <button class="sidebar-close" onclick="toggleMenu()">×</button>
+            <a href="index.html"><i class="fa-solid fa-house"></i>Home</a>
+            <a href="services.html"><i class="fa-solid fa-spa"></i>Services</a>
+            <a href="awarness.html"><i class="fa-solid fa-brain"></i>Awareness</a>
+            <a href="founderpage.html"><i class="fa-solid fa-user"></i>Our Story</a>
+            <a href="events.html"><i class="fa-solid fa-calendar-days"></i>Events</a>
+            <a href="testimonials.html"><i class="fa-solid fa-star"></i>Reviews</a>
+            <a href="gallery.html"><i class="fa-solid fa-image"></i>Gallery</a>
+            <a href="contact.html"><i class="fa-solid fa-phone"></i>Contact Us</a>
+  
 </div>
 
-<!-- SCRIPT -->
+
+<!-- HERO -->
+<section class="events-hero">
+  <h1>Members-Only Experiences</h1>
+  <p>Private wellness events crafted for discipline, recovery, and elite performance.</p>
+</section>
+
+<!-- EVENTS -->
+
+
+
+  <!-- <div class="event-card">
+    <span class="member-badge">MEMBERS ONLY</span>
+    <img src="https://i.pinimg.com/1200x/c7/78/65/c77865b4866ded2d1b66089c8e226697.jpg" class="event-img">
+    <div class="event-content">
+      <span class="event-date">March 12 • 6:30 AM</span>
+      <h3 class="event-title">Sunrise Ice Immersion</h3>
+      <p class="event-desc">A guided cold plunge ritual designed to reset your nervous system and sharpen mental clarity.</p>
+      <div class="event-footer">
+        <span class="price">₹1,499</span>
+        <a class="btn">Request Access</a>
+      </div>
+    </div>
+  </div> -->
+
+  <!-- <div class="event-card">
+    <span class="member-badge">MEMBERS ONLY</span>
+    <img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef" class="event-img">
+    <div class="event-content">
+      <span class="event-date">March 20 • 7:00 PM</span>
+      <h3 class="event-title">Breathwork & Ice Reset</h3>
+      <p class="event-desc">Advanced breath control followed by ice immersion to unlock deep focus and resilience.</p>
+      <div class="event-footer">
+        <span class="price">₹2,499</span>
+        <a class="btn">Request Access</a>
+      </div>
+    </div>
+  </div> -->
+<!-- 
+  <div class="event-card">
+    <span class="member-badge">MEMBERS ONLY</span>
+    <img src="https://images.unsplash.com/photo-1506126613408-eca07ce68773" class="event-img">
+    <div class="event-content">
+      <span class="event-date">April 2 • 5:30 AM</span>
+      <h3 class="event-title">Elite Cold Endurance</h3>
+      <p class="event-desc">A premium endurance experience for members pushing physical and mental limits.</p>
+      <div class="event-footer">
+        <span class="price">₹3,999</span>
+        <a class="btn">Invite Only</a>
+      </div>
+    </div>
+  </div> -->
+
+<section class="events-grid" id="publicEvents"></section>
+
+
+<footer class="grand-footer">
+
+  <hr class="footer-divider">
+
+  <div class="footer-main">
+
+    <div class="footer-col branding-col">
+      <img src="chillthrive.png" alt="Chill Thrive" class="footer-logo">
+      <h4>Chill Thrive</h4>
+    </div>
+
+    <div class="footer-col">
+      <h4>Quick links</h4>
+      <a href="founder.html">Founder Story</a>
+      <a href="services.html">Loyalty Program</a>
+      <a href="awareness.html">Science of Recovery</a>
+      <a href="gallery.html">Our Sanctuary</a>
+    </div>
+
+    <div class="footer-col">
+      <h4>Professional</h4>
+      <a href="#">Corporate Wellness</a>
+      <a href="#">Athlete Programs</a>
+      <a href="#">Affiliate Partner</a>
+    </div>
+
+    <div class="footer-col">
+      <h4>Need Help?</h4>
+      <p class="footer-phone">+91 92270 25160</p>
+      <a href="contact.html">Contact Support</a>
+      <a href="booking.html">Booking FAQ</a>
+    </div>
+
+  </div>
+
+  <div class="brand-strip">
+    <div>Ice Bath</div>
+    <div>Steam Bath</div>
+    <div>Jacuzzi</div>
+    <div>Sauna</div>
+    <div>Contrast Therapy</div>
+  </div>
+
+  <div class="footer-bottom">
+
+    <div class="social-links">
+      <a href="https://www.instagram.com/chill.thrive" target="_blank"><i class="fab fa-instagram"></i></a>
+      <a href="#"><i class="fab fa-facebook-f"></i></a>
+      <a href="#"><i class="fab fa-x-twitter"></i></a>
+    </div>
+
+    <div class="legal-links">
+      <a href="tandc.html">Terms & Conditions</a>
+      <a href="#">Privacy Policy</a>
+      <a href="#">Cookies</a>
+      <a href="#">Site Map</a>
+    </div>
+
+    <p class="copyright">
+      Chill Thrive is a part of Wellness Group © 2026
+    </p>
+
+  </div>
+
+</footer>
+
+
+ 
 <script>
-window.onload = function() {
-    const eventModal = document.getElementById("eventModal");
-    const modalTitle = document.getElementById("modalTitle");
-    const editIndex = document.getElementById("editIndex");
-    const date = document.getElementById("date");
-    const time = document.getElementById("time");
-    const titleInput = document.getElementById("titleInput");
-    const description = document.getElementById("description");
-    const price = document.getElementById("price");
-    const imagePreview = document.getElementById("imagePreview");
-    const eventsContainer = document.getElementById("eventsContainer");
+  const events = JSON.parse(localStorage.getItem("chillthrive_events")) || [];
+  const container = document.getElementById("publicEvents");
 
-    let events = JSON.parse(localStorage.getItem("chillthrive_events")) || [];
-    let uploadedImage = "";
+  if(events.length === 0){
+    container.innerHTML = "<p style='text-align:center;color:white'>No upcoming events</p>";
+  }
 
-    // OPEN MODAL
-    window.openModal = function(edit=false){
-        eventModal.style.display="flex";
-        modalTitle.innerText = edit ? "Edit Event" : "Add New Event";
-    }
-
-    // CLOSE MODAL
-    window.closeModal = function(){
-        eventModal.style.display="none";
-        clearForm();
-    }
-
-    function clearForm(){
-        [date, time, titleInput, description, price].forEach(i => i.value = "");
-        imagePreview.style.display = "none";
-        uploadedImage = "";
-        editIndex.value = "";
-    }
-
-    // IMAGE PREVIEW
-    window.previewImage = function(e){
-        const file = e.target.files[0];
-        const reader = new FileReader();
-        reader.onload = () => {
-            uploadedImage = reader.result;
-            imagePreview.src = uploadedImage;
-            imagePreview.style.display="block";
-        };
-        reader.readAsDataURL(file);
-    }
-
-    // SAVE EVENT
-    window.saveEvent = function(){
-        if(!titleInput.value || !uploadedImage) {
-            alert("Please add title and image");
-            return;
-        }
-        const data = {
-            image: uploadedImage,
-            date: date.value,
-            time: time.value,
-            title: titleInput.value,
-            description: description.value,
-            price: price.value,
-        };
-
-        if(editIndex.value === "") {
-            events.push(data);
-        } else {
-            events[editIndex.value] = data;
-        }
-        localStorage.setItem("chillthrive_events", JSON.stringify(events));
-        renderEvents();
-        closeModal();
-    }
-
-    // RENDER EVENTS
-    function renderEvents(){
-    eventsContainer.innerHTML = "";
-    events.forEach((e,i)=>{
-        eventsContainer.innerHTML += `
-            <div class="event-card">
-                <img src="${e.image}">
-                <div class="event-body">
-                    <small>${e.date} • ${e.time}</small>
-                    <h3>${e.title}</h3>
-                    <p>${e.description}</p>
-
-                    <!-- PRICE (INFO ONLY) -->
-                    <div class="card-footer">
-                        <span>${e.price}</span>
-                    </div>
-
-                    <!-- ADMIN ACTIONS -->
-                    <div class="card-footer">
-                        <button class="edit-btn" onclick="editEvent(${i})">Edit</button>
-                        <button class="delete-btn" onclick="deleteEvent(${i})">Remove</button>
-                    </div>
-                </div>
-            </div>
-        `;
-    });
-}
-
-
-    // EDIT EVENT
-    window.editEvent = function(i){
-        const e = events[i];
-        date.value = e.date;
-        time.value = e.time;
-        titleInput.value = e.title;
-        description.value = e.description;
-        price.value = e.price;
-        uploadedImage = e.image;
-        imagePreview.src = e.image;
-        imagePreview.style.display="block";
-        editIndex.value = i;
-        openModal(true);
-    }
-
-    // DELETE EVENT
-    window.deleteEvent = function(i){
-        events.splice(i,1);
-        localStorage.setItem("chillthrive_events", JSON.stringify(events));
-        renderEvents();
-    }
-    renderEvents();
-
-}
+  events.forEach(e => {
+    container.innerHTML += `
+      <div class="event-card">
+        <span class="member-badge">MEMBERS ONLY</span>
+        <img src="${e.image}" class="event-img">
+        <div class="event-content">
+          <span class="event-date">${e.date} • ${e.time}</span>
+          <h3 class="event-title">${e.title}</h3>
+          <p class="event-desc">${e.description}</p>
+          <div class="event-footer">
+            <span class="price">${e.price}</span>
+            <a class="btn">BooK Now</a>
+          </div>
+        </div>
+      </div>
+    `;
+  });
 </script>
+<script>
+function toggleMenu(){
+  document.getElementById("sidebar").classList.toggle("active");
+  document.getElementById("overlay").classList.toggle("active");
+}
+
+const page = location.pathname.split("/").pop() || "index.html";
+document.querySelectorAll(".sidebar a").forEach(link=>{
+  if(link.getAttribute("href") === page){
+    link.classList.add("active");
+  }
+});
+</script>
+
+
 
 </body>
 </html>
